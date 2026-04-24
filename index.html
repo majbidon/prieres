@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Rattrapage de Prières de Majdeline</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --emerald: #3d9970;
+    --emerald-light: #5aaf88;
+    --emerald-pale: #e8f5f0;
+    --emerald-soft: #b8dece;
+    --mint: #a8d8c2;
+    --sage: #7fb99a;
+    --cream: #fafcfb;
+    --white: #ffffff;
+    --text-dark: #2c4a3e;
+    --text-mid: #4a7a68;
+    --text-light: #8ab5a2;
+    --gold: #c9a84c;
+    --gold-light: #f0e0a8;
+    --rose: #e8a0a0;
+    --rose-light: #fdf0f0;
+    --shadow-soft: 0 4px 20px rgba(61, 153, 112, 0.12);
+    --shadow-card: 0 8px 32px rgba(61, 153, 112, 0.15);
+    --radius: 18px;
+    --radius-sm: 10px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--cream);
+    color: var(--text-dark);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Subtle background pattern */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background:
+      radial-gradient(ellipse at 20% 20%, rgba(168, 216, 194, 0.18) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 80%, rgba(61, 153, 112, 0.08) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .app {
+    max-width: 430px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+    padding-bottom: 30px;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: linear-gradient(135deg, var(--emerald) 0%, var(--sage) 100%);
+    padding: 52px 24px 28px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .header::before {
+    content: '☽';
+    position: absolute;
+    right: -10px;
+    top: -5px;
+    font-size: 130px;
+    opacity: 0.08;
+    color: white;
+    line-height: 1;
+  }
+
+  .header-title {
+    font-family: 'Playfair Display', serif;
+    color: white;
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    margin-bottom: 4px;
+  }
+
+  .header-subtitle {
+    color: rgba(255,255,255,0.75);
+    font-size: 13px;
+    font-weight: 400;
+    letter-spacing: 0.5px;
+  }
+
+  /* ── DASHBOARD ── */
+  .dashboard {
+    margin: -16px 16px 0;
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 22px 20px;
+    box-shadow: var(--shadow-card);
+  }
+
+  .dashboard-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+
+  .stat-card {
+    background: var(--emerald-pale);
+    border-radius: var(--radius-sm);
+    padding: 14px 14px 12px;
+    text-align: center;
+  }
+
+  .stat-card.gold-card {
+    background: var(--gold-light);
+  }
+
+  .stat-card.rose-card {
+    background: var(--rose-light);
+  }
+
+  .stat-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text-light);
+    margin-bottom: 6px;
+  }
+
+  .stat-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    font-weight: 600;
+    color: var(--emerald);
+    line-height: 1;
+  }
+
+  .gold-card .stat-value { color: var(--gold); }
+  .rose-card .stat-value { color: #c0727a; font-size: 13px; font-weight: 600; font-family: 'Nunito', sans-serif; line-height: 1.4; }
+
+  .stat-sub {
+    font-size: 10px;
+    color: var(--text-light);
+    margin-top: 3px;
+  }
+
+  /* Progress */
+  .progress-section { }
+  .progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  .progress-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-mid);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+  }
+  .progress-pct {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    color: var(--emerald);
+    font-weight: 600;
+  }
+
+  .progress-track {
+    background: var(--emerald-pale);
+    border-radius: 99px;
+    height: 10px;
+    overflow: hidden;
+  }
+  .progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--emerald-light), var(--emerald));
+    border-radius: 99px;
+    transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+  }
+  .progress-bar::after {
+    content: '';
+    position: absolute;
+    right: 0; top: 0; bottom: 0;
+    width: 18px;
+    background: rgba(255,255,255,0.4);
+    border-radius: 99px;
+  }
+
+  .progress-counts {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 6px;
+  }
+  .progress-counts span {
+    font-size: 10px;
+    color: var(--text-light);
+  }
+
+  /* ── CALENDAR ── */
+  .calendar-section {
+    margin: 16px 16px 0;
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 20px 16px;
+    box-shadow: var(--shadow-soft);
+  }
+
+  .cal-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+
+  .cal-nav-btn {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    border: 1.5px solid var(--emerald-soft);
+    background: transparent;
+    color: var(--emerald);
+    font-size: 18px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+  }
+  .cal-nav-btn:active { background: var(--emerald-pale); transform: scale(0.92); }
+
+  .cal-month-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 17px;
+    color: var(--text-dark);
+    font-weight: 600;
+  }
+
+  .cal-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    margin-bottom: 8px;
+  }
+  .cal-weekday {
+    text-align: center;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 4px 0;
+  }
+
+  .cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 3px;
+  }
+
+  .cal-day {
+    aspect-ratio: 1;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-dark);
+    position: relative;
+    transition: transform 0.15s;
+    user-select: none;
+  }
+
+  .cal-day:active { transform: scale(0.88); }
+
+  .cal-day.empty { cursor: default; }
+
+  .cal-day.before-start {
+    color: var(--text-light);
+    opacity: 0.45;
+    cursor: default;
+  }
+
+  .cal-day.future {
+    color: var(--text-light);
+  }
+
+  .cal-day.today {
+    font-weight: 700;
+  }
+
+  .cal-day.today::after {
+    content: '';
+    position: absolute;
+    bottom: 4px;
+    width: 4px; height: 4px;
+    background: var(--emerald);
+    border-radius: 50%;
+  }
+
+  .cal-day.status-fait {
+    background: linear-gradient(135deg, #e8f5f0, #d0ece0);
+    color: var(--emerald);
+    font-weight: 700;
+  }
+  .cal-day.status-fait::before {
+    content: '✓';
+    font-size: 8px;
+    position: absolute;
+    top: 3px; right: 4px;
+    color: var(--emerald);
+    font-weight: 900;
+  }
+
+  .cal-day.status-double {
+    background: linear-gradient(135deg, #e0f0ff, #c8e4ff);
+    color: #3a7abf;
+    font-weight: 700;
+  }
+  .cal-day.status-double::before {
+    content: '\2736';
+    font-size: 8px;
+    position: absolute;
+    top: 3px; right: 4px;
+    color: #3a7abf;
+    font-weight: 900;
+  }
+
+  .cal-day.status-pause {
+    background: linear-gradient(135deg, #fdf0f0, #f5e0e0);
+    color: #c0727a;
+    font-weight: 600;
+  }
+  .cal-day.status-pause::before {
+    content: '◦';
+    font-size: 10px;
+    position: absolute;
+    top: 2px; right: 5px;
+    color: #e8a0a0;
+  }
+
+  /* ── LEGEND ── */
+  .legend {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--emerald-pale);
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--text-mid);
+  }
+  .legend-dot {
+    width: 12px; height: 12px;
+    border-radius: 4px;
+  }
+  .legend-dot.fait { background: linear-gradient(135deg, #e8f5f0, #d0ece0); border: 1px solid var(--emerald-soft); }
+  .legend-dot.double { background: linear-gradient(135deg, #e0f0ff, #c8e4ff); border: 1px solid #a0c8f0; }
+  .legend-dot.pause { background: linear-gradient(135deg, #fdf0f0, #f5e0e0); border: 1px solid #e8a0a0; }
+  .legend-dot.todo { background: white; border: 1px solid #ddd; }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(30, 60, 45, 0.45);
+    backdrop-filter: blur(6px);
+    z-index: 100;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+  }
+
+  .modal-overlay.open {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .modal {
+    background: var(--white);
+    border-radius: 24px 24px 0 0;
+    padding: 24px 24px 40px;
+    width: 100%;
+    max-width: 430px;
+    transform: translateY(100%);
+    transition: transform 0.35s cubic-bezier(0.34, 1.2, 0.64, 1);
+  }
+
+  .modal-overlay.open .modal {
+    transform: translateY(0);
+  }
+
+  .modal-handle {
+    width: 40px; height: 4px;
+    background: #ddd;
+    border-radius: 2px;
+    margin: 0 auto 20px;
+  }
+
+  .modal-date {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    color: var(--text-dark);
+    text-align: center;
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+
+  .modal-hijri {
+    text-align: center;
+    color: var(--text-light);
+    font-size: 12px;
+    margin-bottom: 24px;
+  }
+
+  .modal-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .modal-btn {
+    padding: 16px 20px;
+    border-radius: var(--radius-sm);
+    border: 2px solid transparent;
+    font-family: 'Nunito', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.2s;
+    text-align: left;
+  }
+  .modal-btn:active { transform: scale(0.97); }
+
+  .modal-btn.btn-fait {
+    background: var(--emerald-pale);
+    color: var(--emerald);
+    border-color: var(--emerald-soft);
+  }
+  .modal-btn.btn-fait.active, .modal-btn.btn-fait:hover {
+    background: var(--emerald);
+    color: white;
+    border-color: var(--emerald);
+  }
+
+  .modal-btn.btn-double {
+    background: #eef6ff;
+    color: #3a7abf;
+    border-color: #a0c8f0;
+  }
+  .modal-btn.btn-double.active, .modal-btn.btn-double:hover {
+    background: #3a7abf;
+    color: white;
+    border-color: #3a7abf;
+  }
+
+  .modal-btn.btn-pause {
+    background: var(--rose-light);
+    color: #c0727a;
+    border-color: #f0c0c0;
+  }
+  .modal-btn.btn-pause.active, .modal-btn.btn-pause:hover {
+    background: #e8a0a0;
+    color: white;
+    border-color: #e8a0a0;
+  }
+
+  .modal-btn.btn-todo {
+    background: #f5f5f5;
+    color: #999;
+    border-color: #e8e8e8;
+  }
+  .modal-btn.btn-todo:hover {
+    background: #ececec;
+  }
+
+  .modal-btn-icon { font-size: 20px; }
+  .modal-btn-text { flex: 1; }
+  .modal-btn-title { display: block; }
+  .modal-btn-sub { display: block; font-size: 11px; font-weight: 400; opacity: 0.75; margin-top: 1px; }
+
+  .modal-close {
+    margin-top: 14px;
+    width: 100%;
+    padding: 12px;
+    background: transparent;
+    border: none;
+    color: var(--text-light);
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+    cursor: pointer;
+  }
+
+  /* ── STREAK / FOOTER INFO ── */
+  .streak-bar {
+    margin: 12px 16px 0;
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 14px 20px;
+    box-shadow: var(--shadow-soft);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .streak-icon { font-size: 28px; }
+  .streak-text { }
+  .streak-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    color: var(--emerald);
+    font-weight: 600;
+  }
+  .streak-label { font-size: 11px; color: var(--text-light); }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  .dashboard { animation: fadeIn 0.4s ease forwards; }
+  .calendar-section { animation: fadeIn 0.5s 0.1s ease both; }
+  .streak-bar { animation: fadeIn 0.5s 0.15s ease both; }
+
+  /* Prevent body scroll when modal open */
+  body.modal-open { overflow: hidden; }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-title">Rattrapage de Prières de Majdeline</div>
+    <div class="header-subtitle">Commencé le 20 avril 2026 · بِسْمِ ٱللَّٰهِ</div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div class="dashboard">
+    <div class="dashboard-grid">
+      <div class="stat-card">
+        <div class="stat-label">Jours effectués</div>
+        <div class="stat-value" id="doneCount">0</div>
+        <div class="stat-sub">sur 3 516 jours</div>
+      </div>
+      <div class="stat-card gold-card">
+        <div class="stat-label">Dette restante</div>
+        <div class="stat-value" id="debtLeft">3 516</div>
+        <div class="stat-sub">jours à rattraper</div>
+      </div>
+
+    </div>
+
+    <div class="progress-section">
+      <div class="progress-header">
+        <span class="progress-title">Progression totale</span>
+        <span class="progress-pct" id="progressPct">0%</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+      </div>
+      <div class="progress-counts">
+        <span id="progressLeft">3 516 restants</span>
+        <span id="pauseCount">0 pauses</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- STREAK -->
+  <div class="streak-bar">
+    <div class="streak-icon">🔥</div>
+    <div class="streak-text">
+      <div class="streak-num" id="streakNum">0 jour</div>
+      <div class="streak-label">de série en cours</div>
+    </div>
+    <div style="margin-left:auto; text-align:right;">
+      <div class="streak-num" id="bestStreak">0</div>
+      <div class="streak-label">record</div>
+    </div>
+  </div>
+
+  <!-- CALENDAR -->
+  <div class="calendar-section">
+    <div class="cal-nav">
+      <button class="cal-nav-btn" onclick="changeMonth(-1)">‹</button>
+      <div class="cal-month-title" id="calMonthTitle">—</div>
+      <button class="cal-nav-btn" onclick="changeMonth(1)">›</button>
+    </div>
+
+    <div class="cal-weekdays">
+      <div class="cal-weekday">Lu</div>
+      <div class="cal-weekday">Ma</div>
+      <div class="cal-weekday">Me</div>
+      <div class="cal-weekday">Je</div>
+      <div class="cal-weekday">Ve</div>
+      <div class="cal-weekday">Sa</div>
+      <div class="cal-weekday">Di</div>
+    </div>
+
+    <div class="cal-grid" id="calGrid"></div>
+
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot fait"></div> Fait</div>
+      <div class="legend-item"><div class="legend-dot double"></div> Double</div>
+      <div class="legend-item"><div class="legend-dot pause"></div> Pause</div>
+      <div class="legend-item"><div class="legend-dot todo"></div> À faire</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="handleOverlayClick(event)">
+  <div class="modal" id="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-date" id="modalDate">—</div>
+    <div class="modal-hijri" id="modalSub"></div>
+
+    <div class="modal-options">
+      <button class="modal-btn btn-fait" id="btnFait" onclick="setStatus('fait')">
+        <span class="modal-btn-icon">✓</span>
+        <span class="modal-btn-text">
+          <span class="modal-btn-title">Fait</span>
+          <span class="modal-btn-sub">Prière du jour + 1 jour de dette rattrapé</span>
+        </span>
+      </button>
+      <button class="modal-btn btn-double" id="btnDouble" onclick="setStatus('double')">
+        <span class="modal-btn-icon">✶</span>
+        <span class="modal-btn-text">
+          <span class="modal-btn-title">Fait (Double)</span>
+          <span class="modal-btn-sub">Prière du jour + 2 jours de dette rattrapés</span>
+        </span>
+      </button>
+      <button class="modal-btn btn-pause" id="btnPause" onclick="setStatus('pause')">
+        <span class="modal-btn-icon">🌸</span>
+        <span class="modal-btn-text">
+          <span class="modal-btn-title">Pause (Règles / Lochies)</span>
+          <span class="modal-btn-sub">Jour marqué, dette inchangée</span>
+        </span>
+      </button>
+      <button class="modal-btn btn-todo" id="btnTodo" onclick="setStatus('todo')">
+        <span class="modal-btn-icon">○</span>
+        <span class="modal-btn-text">
+          <span class="modal-btn-title">À faire</span>
+          <span class="modal-btn-sub">Remettre le jour en attente</span>
+        </span>
+      </button>
+    </div>
+    <button class="modal-close" onclick="closeModal()">Fermer</button>
+  </div>
+</div>
+
+<script>
+// ── CONSTANTS ──
+const TOTAL_DEBT = 3516;
+const START_DATE = new Date(2026, 3, 20); // April 20, 2026 (month 0-indexed)
+const STORAGE_KEY = 'rattrapage_prieres_v2';
+const PAUSE_PER_MONTH = 6;
+
+// ── STATE ──
+let data = {}; // { 'YYYY-MM-DD': 'fait' | 'double' | 'pause' | 'todo' }
+let currentYear, currentMonth;
+let selectedDateStr = null;
+
+// ── INIT ──
+function init() {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    try { data = JSON.parse(saved); } catch(e) { data = {}; }
+  }
+  const today = new Date();
+  currentYear = today.getFullYear();
+  currentMonth = today.getMonth();
+  renderCalendar();
+  updateDashboard();
+}
+
+function save() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+// ── DATE UTILS ──
+function toDateStr(y, m, d) {
+  return `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+}
+
+function parseDate(str) {
+  const [y, m, d] = str.split('-').map(Number);
+  return new Date(y, m-1, d);
+}
+
+function isBeforeStart(y, m, d) {
+  const dt = new Date(y, m, d);
+  return dt < START_DATE;
+}
+
+function isToday(y, m, d) {
+  const t = new Date();
+  return t.getFullYear() === y && t.getMonth() === m && t.getDate() === d;
+}
+
+function isFuture(y, m, d) {
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  const dt = new Date(y, m, d);
+  return dt > today;
+}
+
+// ── FRENCH DATE FORMAT ──
+const MONTHS_FR = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+const MONTHS_FULL = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+const DAYS_FR = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+
+function formatDateFR(str) {
+  const d = parseDate(str);
+  return `${DAYS_FR[d.getDay()]} ${d.getDate()} ${MONTHS_FULL[d.getMonth()]} ${d.getFullYear()}`;
+}
+
+// ── CALENDAR RENDER ──
+function changeMonth(delta) {
+  currentMonth += delta;
+  if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+  if (currentMonth < 0) { currentMonth = 11; currentYear--; }
+  renderCalendar();
+}
+
+function renderCalendar() {
+  document.getElementById('calMonthTitle').textContent =
+    `${MONTHS_FULL[currentMonth]} ${currentYear}`;
+
+  const grid = document.getElementById('calGrid');
+  grid.innerHTML = '';
+
+  const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+  // Adjust: Monday = 0
+  const startOffset = (firstDay === 0) ? 6 : firstDay - 1;
+  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+
+  // Empty cells
+  for (let i = 0; i < startOffset; i++) {
+    const empty = document.createElement('div');
+    empty.className = 'cal-day empty';
+    grid.appendChild(empty);
+  }
+
+  for (let d = 1; d <= daysInMonth; d++) {
+    const cell = document.createElement('div');
+    const str = toDateStr(currentYear, currentMonth, d);
+    const status = data[str] || 'todo';
+    let classes = 'cal-day';
+
+    if (isBeforeStart(currentYear, currentMonth, d)) {
+      classes += ' before-start';
+      cell.innerHTML = `<span>${d}</span>`;
+      cell.className = classes;
+      grid.appendChild(cell);
+      continue;
+    }
+
+    if (isToday(currentYear, currentMonth, d)) classes += ' today';
+    if (isFuture(currentYear, currentMonth, d)) classes += ' future';
+    if (status === 'fait') classes += ' status-fait';
+    if (status === 'double') classes += ' status-double';
+    if (status === 'pause') classes += ' status-pause';
+
+    cell.className = classes;
+    cell.innerHTML = `<span>${d}</span>`;
+
+    // Allow clicking past, today, and for future: allow too (for planning)
+    if (!isBeforeStart(currentYear, currentMonth, d)) {
+      cell.addEventListener('click', () => openModal(str));
+    }
+
+    grid.appendChild(cell);
+  }
+}
+
+// ── DASHBOARD UPDATE ──
+function updateDashboard() {
+  let done = 0;
+  let pauses = 0;
+
+  Object.values(data).forEach(v => {
+    if (v === 'fait') done++;
+    if (v === 'double') done += 2;
+    if (v === 'pause') pauses++;
+  });
+
+  const debtLeft = Math.max(0, TOTAL_DEBT - done);
+  const pct = (done / TOTAL_DEBT * 100).toFixed(2);
+
+  document.getElementById('doneCount').textContent = done.toLocaleString('fr-FR');
+  document.getElementById('debtLeft').textContent = debtLeft.toLocaleString('fr-FR');
+  document.getElementById('progressPct').textContent = pct + '%';
+  document.getElementById('progressBar').style.width = Math.min(pct, 100) + '%';
+  document.getElementById('progressLeft').textContent = debtLeft.toLocaleString('fr-FR') + ' restants';
+  document.getElementById('pauseCount').textContent = pauses.toLocaleString('fr-FR') + ' pause' + (pauses > 1 ? 's' : '');
+
+
+
+  // Streak
+  computeStreaks();
+}
+
+function computeStreaks() {
+  const today = new Date();
+  today.setHours(0,0,0,0);
+
+  // Build sorted list of dates from start
+  let current = 0;
+  let best = 0;
+  let streak = 0;
+  let d = new Date(START_DATE);
+
+  while (d <= today) {
+    const str = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    const st = data[str] || 'todo';
+    if (st === 'fait' || st === 'double') {
+      streak++;
+      if (streak > best) best = streak;
+    } else {
+      streak = 0;
+    }
+    d.setDate(d.getDate() + 1);
+  }
+  current = streak;
+
+  const streakEl = document.getElementById('streakNum');
+  streakEl.textContent = current + (current > 1 ? ' jours' : ' jour');
+  document.getElementById('bestStreak').textContent = best;
+}
+
+// ── MODAL ──
+function openModal(dateStr) {
+  selectedDateStr = dateStr;
+  const status = data[dateStr] || 'todo';
+
+  document.getElementById('modalDate').textContent = formatDateFR(dateStr);
+
+  // Sub info
+  const isFut = isFuture(
+    parseInt(dateStr.split('-')[0]),
+    parseInt(dateStr.split('-')[1]) - 1,
+    parseInt(dateStr.split('-')[2])
+  );
+  document.getElementById('modalSub').textContent = isFut ? 'Date à venir' : 'Sélectionnez un statut';
+
+  // Highlight active
+  ['fait','double','pause','todo'].forEach(s => {
+    const idMap = { fait: 'btnFait', double: 'btnDouble', pause: 'btnPause', todo: 'btnTodo' };
+    document.getElementById(idMap[s]).classList.toggle('active', status === s);
+  });
+
+  document.getElementById('modalOverlay').classList.add('open');
+  document.body.classList.add('modal-open');
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+  document.body.classList.remove('modal-open');
+  selectedDateStr = null;
+}
+
+function handleOverlayClick(e) {
+  if (e.target === document.getElementById('modalOverlay')) closeModal();
+}
+
+function setStatus(status) {
+  if (!selectedDateStr) return;
+
+  if (status === 'todo') {
+    delete data[selectedDateStr];
+  } else {
+    data[selectedDateStr] = status;
+  }
+
+  save();
+  closeModal();
+  renderCalendar();
+  updateDashboard();
+}
+
+// ── START ──
+init();
+</script>
+</body>
+</html>
